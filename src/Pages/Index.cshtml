@@ -1,0 +1,59 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Lockout Buddy";
+}
+
+<form method="post" class="container">
+    <h1>Sorry you're locked out! Let us help</h1>
+    <p class="subtitle">Enter a US phone number to retrieve the backup code</p>
+        
+    <div class="input-group">
+        <label for="phone">Phone Number</label>
+        <input asp-for="PhoneNumber" type="tel" id="phone" placeholder="(555) 123-4567" autocomplete="tel" autofocus></input>
+        <div class="message error" id="message">@Model.ErrorMessage</div>
+    </div>
+    
+    <input id="submit" type="submit" value="Submit" disabled>
+
+    <div class="format-hint">
+        <h3>Accepted Formats:</h3>
+        <ul>
+            <li>5551234567</li>
+            <li>(555) 123-4567</li>
+            <li>555-123-4567</li>
+            <li>555.123.4567</li>
+            <li>+1 555 123 4567</li>
+        </ul>
+    </div>
+</form>
+
+<script>
+    setTimeout(() => {
+        const phoneWatcher = watchPhoneInput("#phone", { onValid: enableSubmit, onInvalid: disableSubmit});
+        document.querySelector('form').addEventListener('submit', (e) => {
+            if (!phoneWatcher.validate()) {
+                e.preventDefault();
+                setMessage('Please enter a valid phone number');
+            }
+        });
+    }, 1000);
+    
+    function disableSubmit() {
+        const submit = document.getElementById('submit');
+        submit.disabled = true;
+    }
+
+    function enableSubmit() {
+        const submit = document.getElementById('submit');
+        submit.disabled = false;
+    }
+
+    function hideSubmit() {
+        document.querySelector('form').classList.remove('active');
+    }
+    
+    function setMessage(text) {
+        const message = document.getElementById('message').innerHTML = text;
+    }
+</script>
